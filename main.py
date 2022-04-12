@@ -1,14 +1,14 @@
 from flask import Flask
 from flask import request
 from flask import render_template
-from flask_wtf import CsrfProtect
+from flask_wtf import CSRFProtect
 from flask import make_response
 from flask import session
 import forms
 
 app = Flask(__name__)
 app.secret_key = 'Esto_es_un_secreto'
-csrf = CsrfProtect(app)
+csrf = CSRFProtect(app)
 
 @app.route('/', methods=['GET','POST'])
 def login():
