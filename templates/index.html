@@ -2,32 +2,25 @@
 {% block title %} {{titulo}} {% endblock %}
 {% block content %}
 {% from "_macro.html" import render_field %}
-<div class="row">
-    <div class="col-lg-8 col-lg-ofset-2 col-md-10 col-md-offset-1">
-        <form id="loginForm" method="post">
-            <!-- Email input -->
-            <div class="row control-group">
-                <div class="form-group col-xs-12 floating-label-form-group controls">
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6">
+            <form id="loginForm" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <!-- Email input -->
+                <div class="form-group">
                     {{ render_field(form.user, class="form-control") }}
                     <p class="help-block text-danger"></p>
                 </div>
-            </div>
-
-            <!-- Password input -->
-            <div class="row control-group">
-                <div class="form-group col-xs-12 floating-label-form-group controls">
+                <!-- Password input -->
+                <div class="form-group">
                     {{ render_field(form.pwd, class="form-control") }}
                     <p class="help-block text-danger"></p>
                 </div>
-            </div>
-
-            <!-- 2 column grid layout for inline styling -->
-            <div class="row">
-                <div class="form-group col-xs-12">
-                    <button class="btn btn-default">Enviar</button>
-                </div>
-            </div>
-        </form>
+                <!-- botón -->
+                <button type="submit" class="btn btn-dark w-100">Enviar</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
