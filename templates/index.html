@@ -1,5 +1,33 @@
 {% extends 'base/base.html' %}
 {% block title %} {{titulo}} {% endblock %}
 {% block content %}
-<h1>Hola mundo</h1>
+{% from "_macro.html" import render_field %}
+<div class="row">
+    <div class="col-lg-8 col-lg-ofset-2 col-md-10 col-md-offset-1">
+        <form id="loginForm" method="post">
+            <!-- Email input -->
+            <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    {{ render_field(form.user, class="form-control") }}
+                    <p class="help-block text-danger"></p>
+                </div>
+            </div>
+
+            <!-- Password input -->
+            <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    {{ render_field(form.pwd, class="form-control") }}
+                    <p class="help-block text-danger"></p>
+                </div>
+            </div>
+
+            <!-- 2 column grid layout for inline styling -->
+            <div class="row">
+                <div class="form-group col-xs-12">
+                    <button class="btn btn-default">Enviar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

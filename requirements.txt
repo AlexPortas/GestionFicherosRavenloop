@@ -1,2 +1,3 @@
 • En caso de necesitar librerías de terceros, se adjuntarán en un fichero "requirements.txt" para poder ser descargadas con pip.
 flask
+wtforms==2.3.3
