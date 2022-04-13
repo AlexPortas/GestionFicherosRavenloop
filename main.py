@@ -8,10 +8,20 @@ from flask import url_for
 from flask import redirect
 from flask import flash
 import forms
+import json
 
 app = Flask(__name__)
 app.secret_key = 'Esto_es_un_secreto'
 csrf = CSRFProtect(app)
+
+@app.errorhandler(404)
+def pageError(e):
+    titulo='Página no encontrada'
+    return render_template('error.html', titulo=titulo)
+
+@app.before_request
+def beforeRequest():
+    print(request.endpoint)
 
 @app.route('/', methods=['GET','POST'])
 def login():
@@ -27,6 +37,12 @@ def login():
 
         session['user'] = login_form.user.data
     return render_template('index.html', titulo=titulo, form=login_form)
+
+@app.route('/ajax-login', methods=['POST'])
+def ajax_login():
+    user=request.form['user']
+    response={'status':200, 'user':user, 'id':10}
+    return json.dumps(response)
 
 @app.route('/logout')
 def logout():
