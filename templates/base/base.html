@@ -13,8 +13,17 @@
 </head>
 
 <body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msn in messages %}
+                <div class="alert alert-success"> {{ msn }} </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     {% block content %}
     {% endblock %}
+
     <!-- Footer -->
     <footer class="text-center text-lg-start bg-light text-muted">
         <div class="text-center p-4">

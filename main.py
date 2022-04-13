@@ -4,6 +4,9 @@ from flask import render_template
 from flask_wtf import CSRFProtect
 from flask import make_response
 from flask import session
+from flask import url_for
+from flask import redirect
+from flask import flash
 import forms
 
 app = Flask(__name__)
@@ -14,17 +17,31 @@ csrf = CSRFProtect(app)
 def login():
     if 'user' in session:
         user = session['user']
-
+        print(user)
     titulo="Bienvenido"
     login_form = forms.LoginForm(request.form)
     if request.method=='POST' and login_form.validate():
+        user=login_form.user.data
+        success_message = 'Bienvenido {}'.format(user)
+        flash(success_message)
+
         session['user'] = login_form.user.data
     return render_template('index.html', titulo=titulo, form=login_form)
 
+@app.route('/logout')
+def logout():
+    if 'user' in session:
+        session.pop('user')
+    return redirect(url_for('login'))
+
 @app.route('/cookie')
 def cookie():
+    if 'user' in session:
+        user = session['user']
+    else:
+        user = 'No hay session'
     titulo = "Cookie"
-    response = make_response(render_template('cookie.html', titulo=titulo))
+    response = make_response(render_template('cookie.html', user=user, titulo=titulo))
   #  response.set_cookie('usuario', 'Alex')
     return response
 
