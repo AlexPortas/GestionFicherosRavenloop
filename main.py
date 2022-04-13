@@ -7,12 +7,17 @@ from flask import session
 from flask import url_for
 from flask import redirect
 from flask import flash
+from flask import g 
+
+from config import DevelopmentConfig
+
 import forms
 import json
 
 app = Flask(__name__)
-app.secret_key = 'Esto_es_un_secreto'
-csrf = CSRFProtect(app)
+app.config.from_object(DevelopmentConfig)
+
+csrf = CSRFProtect()
 
 @app.errorhandler(404)
 def pageError(e):
@@ -21,7 +26,16 @@ def pageError(e):
 
 @app.before_request
 def beforeRequest():
-    print(request.endpoint)
+   # print(request.endpoint)
+    if 'user' in session:
+        g.test = session['user']
+    else:
+        g.test = 'No se a logeado'
+
+@app.after_request
+def afterRequest(res):
+    print(g.test)
+    return res
 
 @app.route('/', methods=['GET','POST'])
 def login():
@@ -86,4 +100,5 @@ def user(name = ''):
         return render_template('user.html', nombre = name, age=age, lista=lista)
 
 if __name__ =='__main__':
-    app.run(debug  = True, port = 8118)
+    csrf.init_app(app)
+    app.run(port = 8118)
