@@ -1,16 +1,10 @@
-from flask import Flask
-from flask import request
-from flask import render_template
+from flask import Flask, request, render_template, make_response, session, url_for, redirect, flash, g
+
 from flask_wtf import CSRFProtect
-from flask import make_response
-from flask import session
-from flask import url_for
-from flask import redirect
-from flask import flash
-from flask import g 
 
 from config import DevelopmentConfig
 
+from models import db, User
 import forms
 import json
 
@@ -64,6 +58,20 @@ def logout():
         session.pop('user')
     return redirect(url_for('login'))
 
+@app.route('/create', methods = ['GET', 'POST'])
+def create():
+    titulo='Crear nuevo usuario'
+    create_form = forms.CreateForm(request.form)
+    if request.method == 'POST' and create_form.validate():
+        user = User(create_form.user.data, create_form.pwd.data)
+        db.session.add(user)
+        db.session.commit()
+
+        success_message ='Usuario registrado en la base de datos'
+        flash(success_message)
+         
+    return render_template('create.html', titulo=titulo, form=create_form)
+
 @app.route('/cookie')
 def cookie():
     if 'user' in session:
@@ -101,4 +109,9 @@ def user(name = ''):
 
 if __name__ =='__main__':
     csrf.init_app(app)
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
+
     app.run(port = 8118)
