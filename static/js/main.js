@@ -13,7 +13,6 @@ $(document).ready(function(){
         });
     }
     $('#loginForm').submit(function(e){
-        e.preventDefault();
-        ajax_login();
+        
     });
 });

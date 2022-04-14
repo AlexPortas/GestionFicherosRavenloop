@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, make_response, session, url_for, redirect, flash, g
+from flask import Flask, request, render_template, session, url_for, redirect, flash
 
 from flask_wtf import CSRFProtect
 
@@ -6,7 +6,6 @@ from config import DevelopmentConfig
 
 from models import db, User
 import forms
-import json
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -20,37 +19,27 @@ def pageError(e):
 
 @app.before_request
 def beforeRequest():
-   # print(request.endpoint)
-    if 'user' in session:
-        g.test = session['user']
-    else:
-        g.test = 'No se a logeado'
+    if 'user' in session and request.endpoint in ['login', 'create']:
+        return redirect(url_for('index'))
 
-@app.after_request
-def afterRequest(res):
-    print(g.test)
-    return res
-
-@app.route('/', methods=['GET','POST'])
+@app.route('/login', methods=['GET','POST'])
 def login():
-    if 'user' in session:
-        user = session['user']
-        print(user)
     titulo="Bienvenido"
     login_form = forms.LoginForm(request.form)
     if request.method=='POST' and login_form.validate():
         user=login_form.user.data
-        success_message = 'Bienvenido {}'.format(user)
-        flash(success_message)
+        pwd=login_form.pwd.data
 
-        session['user'] = login_form.user.data
-    return render_template('index.html', titulo=titulo, form=login_form)
+        nuevoUsuario=User.query.filter_by(user=user).first()
+        print(nuevoUsuario)
+        if nuevoUsuario is not None and nuevoUsuario.verify_pwd(pwd):
+            session['user'] = user
+            return redirect(url_for('index'))
+        else:
+            message = 'Usuario o contraseña no valida'
+            flash(message)
 
-@app.route('/ajax-login', methods=['POST'])
-def ajax_login():
-    user=request.form['user']
-    response={'status':200, 'user':user, 'id':10}
-    return json.dumps(response)
+    return render_template('login.html', titulo=titulo, form=login_form)
 
 @app.route('/logout')
 def logout():
@@ -72,40 +61,14 @@ def create():
          
     return render_template('create.html', titulo=titulo, form=create_form)
 
-@app.route('/cookie')
-def cookie():
+@app.route('/')
+def index():
     if 'user' in session:
         user = session['user']
     else:
-        user = 'No hay session'
-    titulo = "Cookie"
-    response = make_response(render_template('cookie.html', user=user, titulo=titulo))
-  #  response.set_cookie('usuario', 'Alex')
-    return response
-
-#http://localhost:8118/saludoPersonalizado?nombre=Alex
-@app.route('/saludoPersonalizado')
-def saludoPersonalizado():
-    nombre = request.args.get('nombre', 'no pusistes')
-    return 'Que pasa {} ??'.format(nombre)
-
-@app.route('/p')
-@app.route('/p/<name>')
-@app.route('/p/<name>/<int:num>')
-def sPersonalizado(name = '', num = ''):
-    if(name==''):
-        return 'No has introducido nombre. Que pasa desconocido ??'
-    else:
-        return 'Que pasa {} ??'.format(name)
-
-@app.route('/user/<name>')
-def user(name = ''):
-    age=132
-    lista=[1,32,True,'Alex']
-    if(name==''):
-        return 'No has introducido nombre. Que pasa desconocido ??'
-    else:
-        return render_template('user.html', nombre = name, age=age, lista=lista)
+        return redirect(url_for('login'))
+    titulo = "Inicio"
+    return render_template('index.html', user=user, titulo=titulo)
 
 if __name__ =='__main__':
     csrf.init_app(app)

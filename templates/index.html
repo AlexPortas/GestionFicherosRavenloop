@@ -1,27 +1,6 @@
 {% extends 'base/base.html' %}
 {% block title %} {{titulo}} {% endblock %}
 {% block content %}
-{% from "_macro.html" import render_field %}
-<div class="container mt-5">
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-6">
-            <form id="loginForm" method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <!-- Email input -->
-                <div class="form-group">
-                    {{ render_field(form.user, class="form-control") }}
-                    <p class="help-block text-danger"></p>
-                </div>
-                <!-- Password input -->
-                <div class="form-group">
-                    {{ render_field(form.pwd, class="form-control") }}
-                    <p class="help-block text-danger"></p>
-                </div>
-                <!-- botón -->
-                <button type="submit" class="btn btn-dark w-100">Enviar</button>
-            </form>
-            <a href="/create">Registrarte</a>
-        </div>
-    </div>
-</div>
+<h1>{{ user }}</h1>
+<a href="/logout" class="btn btn-primary">Cerrar sesión</a>
 {% endblock %}
