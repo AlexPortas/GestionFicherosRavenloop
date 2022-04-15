@@ -4,7 +4,7 @@ from flask_wtf import CSRFProtect
 
 from config import DevelopmentConfig
 
-from models import db, User
+from models import db, User, UploadedFiles
 
 from werkzeug.utils import secure_filename
 
@@ -74,12 +74,20 @@ def index():
     
     if request.method == 'POST':
         f = request.files['archivo']
+        print(f)
         folder = os.path.realpath(__file__).replace('\\','/').split('/')[0:-1]
         f.save('/'.join(folder) + '/Archivos/' + secure_filename(f.filename))
+
+        up_file = UploadedFiles(user, f.filename, 24, 'hash')
+        db.session.add(up_file)
+        db.session.commit()
+
         return redirect(url_for('index'))
 
     titulo = "Inicio"
-    return render_template('index.html', user=user, titulo=titulo)
+    archivos = UploadedFiles.query.all()
+    print(archivos)
+    return render_template('index.html', user=user, titulo=titulo, archivos=archivos)
 
 if __name__ =='__main__':
     csrf.init_app(app)
