@@ -74,7 +74,6 @@ def index():
     
     if request.method == 'POST':
         f = request.files['archivo']
-        print(f)
         folder = os.path.realpath(__file__).replace('\\','/').split('/')[0:-1]
         f.save('/'.join(folder) + '/Archivos/' + secure_filename(f.filename))
 
@@ -86,7 +85,6 @@ def index():
 
     titulo = "Inicio"
     archivos = UploadedFiles.query.all()
-    print(archivos)
     return render_template('index.html', user=user, titulo=titulo, archivos=archivos)
 
 if __name__ =='__main__':
