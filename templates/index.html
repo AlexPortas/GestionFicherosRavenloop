@@ -2,5 +2,14 @@
 {% block title %} {{titulo}} {% endblock %}
 {% block content %}
 <h1>{{ user }}</h1>
+<form action="" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    
+  <div class="form-group">
+    <input type="file" name="archivo" id="archivoSubir">
+    
+    </div>
+    <input type="submit" value="Subir">
+</form>
 <a href="/logout" class="btn btn-primary">Cerrar sesión</a>
 {% endblock %}

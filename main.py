@@ -1,10 +1,15 @@
-from flask import Flask, request, render_template, session, url_for, redirect, flash
+from flask import Flask, request, render_template, session, url_for, redirect, flash, send_from_directory
 
 from flask_wtf import CSRFProtect
 
 from config import DevelopmentConfig
 
 from models import db, User
+
+from werkzeug.utils import secure_filename
+
+import os
+
 import forms
 
 app = Flask(__name__)
@@ -31,7 +36,6 @@ def login():
         pwd=login_form.pwd.data
 
         nuevoUsuario=User.query.filter_by(user=user).first()
-        print(nuevoUsuario)
         if nuevoUsuario is not None and nuevoUsuario.verify_pwd(pwd):
             session['user'] = user
             return redirect(url_for('index'))
@@ -61,12 +65,19 @@ def create():
          
     return render_template('create.html', titulo=titulo, form=create_form)
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def index():
     if 'user' in session:
         user = session['user']
     else:
         return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        f = request.files['archivo']
+        folder = os.path.realpath(__file__).replace('\\','/').split('/')[0:-1]
+        f.save('/'.join(folder) + '/Archivos/' + secure_filename(f.filename))
+        return redirect(url_for('index'))
+
     titulo = "Inicio"
     return render_template('index.html', user=user, titulo=titulo)
 

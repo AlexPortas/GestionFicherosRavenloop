@@ -1,4 +1,6 @@
 • En caso de necesitar librerías de terceros, se adjuntarán en un fichero "requirements.txt" para poder ser descargadas con pip.
+No tengo ni idea de que formato hay queusar para adjuntar estas librerias pero básicamente estasson las librerias que instale:
 flask
-wtforms==2.3.3
+wtforms
 flask_wtf
+Flask_SQLAlchemy
